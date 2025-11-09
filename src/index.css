@@ -1,0 +1,218 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #0B1C2C;
+    color: rgb(243 244 246);
+    font-family: 'Rajdhani', 'Inter', 'Segoe UI', system-ui, sans-serif;
+    background-image: linear-gradient(180deg, #050508 0%, #0B1C2C 50%, #050508 100%);
+    min-height: 100vh;
+  }
+}
+
+@layer utilities {
+  .bg-cryptora-navy {
+    background-color: #0B1C2C;
+  }
+  
+  .bg-cryptora-neon {
+    background-color: #00C3FF;
+  }
+  
+  .bg-cryptora-dark {
+    background-color: #050508;
+  }
+  
+  .bg-cryptora-light {
+    background-color: #1a1a2e;
+  }
+  
+  .text-cryptora-navy {
+    color: #0B1C2C;
+  }
+  
+  .text-cryptora-neon {
+    color: #00C3FF;
+  }
+  
+  .border-cryptora-navy {
+    border-color: #0B1C2C;
+  }
+  
+  .border-cryptora-neon {
+    border-color: #00C3FF;
+  }
+  
+  .cryptora-border {
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgba(0, 195, 255, 0.3);
+    box-shadow: 0 0 10px rgba(0, 195, 255, 0.1);
+  }
+  
+  .cryptora-glow {
+    box-shadow: 0 0 20px rgba(0, 195, 255, 0.3);
+  }
+  
+  .text-neon-glow {
+    text-shadow: 0 0 10px #00C3FF;
+  }
+  
+  .text-neon-glow-sm {
+    text-shadow: 0 0 5px #00C3FF;
+  }
+  
+  .neon-button {
+    border-width: 2px;
+    border-style: solid;
+    border-color: #00C3FF;
+    color: #00C3FF;
+    font-weight: 700;
+    transition-property: all;
+    transition-duration: 0.3s;
+    box-shadow: 0 0 10px rgba(0, 195, 255, 0.5);
+  }
+  
+  .neon-button:hover {
+    background-color: #00C3FF;
+    color: #0B1C2C;
+    box-shadow: 0 0 20px rgba(0, 195, 255, 0.8);
+  }
+  
+  .glassmorphism {
+    background-color: rgba(11, 28, 44, 0.4);
+    backdrop-filter: blur(10px);
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgba(0, 195, 255, 0.2);
+  }
+  
+  /* Input styling - black text for visibility */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"] {
+    color: #000000 !important;
+  }
+  
+  input::placeholder {
+    color: #4b5563 !important;
+    opacity: 1;
+  }
+  
+  /* Ensure input backgrounds are light enough for black text */
+  input.bg-white\/90 {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+  }
+  
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Logo styles - ensure full color display */
+  .cryptora-logo-container,
+  .cryptora-logo-container * {
+    opacity: 1 !important;
+    filter: none !important;
+    mix-blend-mode: normal !important;
+  }
+  
+  /* Ensure logo images display correctly */
+  img[alt*="CRYPTORA"],
+  img[alt*="Logo"] {
+    opacity: 1 !important;
+    filter: none !important;
+    mix-blend-mode: normal !important;
+  }
+  
+  /* Ensure Lock icon displays correctly */
+  svg[class*="lucide-lock"] {
+    opacity: 1 !important;
+    filter: none !important;
+    color: #00C3FF !important;
+  }
+  
+  /* Override any parent styles affecting logos */
+  [style*="opacity"] img[alt*="Logo"],
+  [style*="filter"] img[alt*="Logo"] {
+    opacity: 1 !important;
+    filter: none !important;
+  }
+}
+
+@keyframes nodePulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+.node-pulse {
+  animation: nodePulse 2s ease-in-out infinite;
+}
+
+.data-flow {
+  stroke-dasharray: 10 10;
+  animation: dataFlow 3s linear infinite;
+}
+
+@keyframes neonRing {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(0, 195, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(0, 195, 255, 0.5);
+  }
+}
+
+.neon-ring {
+  animation: neonRing 3s ease-in-out infinite;
+}
+
+@keyframes floatParticle {
+  0% {
+    transform: translateY(100vh) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) translateX(100px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.float-particle {
+  animation: floatParticle 15s linear infinite;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
