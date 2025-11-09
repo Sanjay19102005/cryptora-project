@@ -1,5 +1,22 @@
 // API service for backend communication
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// Auto-detect backend URL with sensible fallbacks:
+// 1) VITE_API_URL if provided
+// 2) Dev server (port 3000) -> use proxy via relative '/api'
+// 3) Otherwise, default to localhost backend
+const detectBaseUrl = () => {
+  const envUrl = import.meta?.env?.VITE_API_URL;
+  if (envUrl) return envUrl.replace(/\/$/, '');
+  if (typeof window !== 'undefined') {
+    const { origin, port } = window.location;
+    if (port === '3000') return '/api'; // Vite dev proxy
+    if (port === '4173') return 'http://localhost:5000/api'; // vite preview -> use local backend
+    // If same-origin backend is configured (e.g., via reverse proxy), use relative path
+    return `${origin}/api`;
+  }
+  return 'http://localhost:5000/api';
+};
+
+const API_BASE_URL = detectBaseUrl();
 
 // Helper function to handle API responses
 const handleResponse = async (response) => {
@@ -14,7 +31,8 @@ export const api = {
   // Sign up
   signup: async (username, email, password) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/users/signup`, {
+      const url = `${API_BASE_URL}/users/signup`;
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -24,8 +42,8 @@ export const api = {
       return await handleResponse(response);
     } catch (error) {
       console.error('Signup error:', error);
-      if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
-        return { success: false, message: 'Cannot connect to server. Please make sure the backend is running on http://localhost:5000' };
+      if (error.message?.includes('Failed to fetch') || error.message?.includes('NetworkError')) {
+        return { success: false, message: 'Cannot connect to server. Please make sure the backend is running.' };
       }
       return { success: false, message: 'Network error. Please check your connection.' };
     }
@@ -34,7 +52,8 @@ export const api = {
   // Resend OTP
   resendOTP: async (email) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/users/resend-otp`, {
+      const url = `${API_BASE_URL}/users/resend-otp`;
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -44,8 +63,8 @@ export const api = {
       return await handleResponse(response);
     } catch (error) {
       console.error('Resend OTP error:', error);
-      if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
-        return { success: false, message: 'Cannot connect to server. Please make sure the backend is running on http://localhost:5000' };
+      if (error.message?.includes('Failed to fetch') || error.message?.includes('NetworkError')) {
+        return { success: false, message: 'Cannot connect to server. Please make sure the backend is running.' };
       }
       return { success: false, message: 'Network error. Please try again.' };
     }
@@ -54,7 +73,8 @@ export const api = {
   // Verify OTP
   verifyOTP: async (email, otp) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/verify-otp`, {
+      const url = `${API_BASE_URL}/auth/verify-otp`;
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -64,8 +84,8 @@ export const api = {
       return await handleResponse(response);
     } catch (error) {
       console.error('Verify OTP error:', error);
-      if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
-        return { success: false, message: 'Cannot connect to server. Please make sure the backend is running on http://localhost:5000' };
+      if (error.message?.includes('Failed to fetch') || error.message?.includes('NetworkError')) {
+        return { success: false, message: 'Cannot connect to server. Please make sure the backend is running.' };
       }
       return { success: false, message: 'Network error. Please try again.' };
     }
@@ -74,7 +94,8 @@ export const api = {
   // Login
   login: async (username, password) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+      const url = `${API_BASE_URL}/auth/login`;
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -84,8 +105,8 @@ export const api = {
       return await handleResponse(response);
     } catch (error) {
       console.error('Login error:', error);
-      if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
-        return { success: false, message: 'Cannot connect to server. Please make sure the backend is running on http://localhost:5000' };
+      if (error.message?.includes('Failed to fetch') || error.message?.includes('NetworkError')) {
+        return { success: false, message: 'Cannot connect to server. Please make sure the backend is running.' };
       }
       return { success: false, message: 'Network error. Please check your connection.' };
     }
