@@ -46,7 +46,7 @@ const Landing = () => {
       <FloatingParticles count={40} />
       
       {/* Radial glow behind logo */}
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-cryptora-neon/10 rounded-full blur-3xl -z-10"></div>
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-[800px] aspect-square bg-cryptora-neon/10 rounded-full blur-3xl -z-10"></div>
 
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-8">
         {/* Logo Section */}
@@ -54,7 +54,7 @@ const Landing = () => {
           {/* Logo Display */}
           <div className="relative">
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-96 h-96 rounded-full border-4 border-cryptora-neon/30 neon-ring"></div>
+              <div className="w-56 h-56 md:w-80 md:h-80 rounded-full border-4 border-cryptora-neon/30 neon-ring"></div>
             </div>
             <div className="relative flex flex-col items-center" style={{ opacity: 1, filter: 'none' }}>
               {logoSrc && !logoError ? (
@@ -92,9 +92,10 @@ const Landing = () => {
           <div className="flex justify-center my-12">
             <div className="relative">
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-64 h-64 rounded-full bg-cryptora-neon/5 blur-2xl"></div>
+                <div className="w-40 h-40 sm:w-56 sm:h-56 md:w-64 md:h-64 rounded-full bg-cryptora-neon/5 blur-2xl"></div>
               </div>
-              <NetworkGlobe size={250} />
+              {/* Responsive globe size based on viewport width */}
+              <NetworkGlobe size={typeof window !== 'undefined' && window.innerWidth <= 480 ? 180 : (typeof window !== 'undefined' && window.innerWidth <= 768 ? 220 : 260)} />
             </div>
           </div>
 

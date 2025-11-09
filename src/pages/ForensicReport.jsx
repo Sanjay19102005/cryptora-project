@@ -42,7 +42,7 @@ const ForensicReport = ({ onLogout }) => {
     return (
       <div className="flex min-h-screen bg-cryptora-navy">
         <Sidebar onLogout={onLogout} />
-        <div className="flex-1 ml-64 p-8 flex items-center justify-center">
+      <div className="flex-1 ml-0 lg:ml-64 p-4 sm:p-6 lg:p-8 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-cryptora-neon mx-auto mb-4"></div>
             <p className="text-gray-400 text-lg font-futura">Generating forensic report...</p>
@@ -56,7 +56,7 @@ const ForensicReport = ({ onLogout }) => {
     <div className="flex min-h-screen bg-cryptora-navy">
       <Sidebar onLogout={onLogout} />
       
-      <div className="flex-1 ml-64 p-8">
+      <div className="flex-1 ml-0 lg:ml-64 p-4 sm:p-6 lg:p-8">
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-white mb-2 flex items-center space-x-3 font-futura text-neon-glow-sm">

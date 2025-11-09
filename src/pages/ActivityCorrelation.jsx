@@ -78,7 +78,7 @@ const ActivityCorrelation = ({ onLogout }) => {
     <div className="flex min-h-screen bg-cryptora-navy">
       <Sidebar onLogout={onLogout} />
       
-      <div className="flex-1 ml-64 p-8">
+      <div className="flex-1 ml-0 lg:ml-64 p-4 sm:p-6 lg:p-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white mb-2 font-futura text-neon-glow-sm">Activity Correlation</h1>
           <p className="text-gray-400 font-futura">Upload PCAP/Log files to correlate TOR network activity</p>

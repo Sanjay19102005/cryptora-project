@@ -22,7 +22,7 @@ const Sidebar = ({ onLogout }) => {
   ]
 
   return (
-    <div className="w-64 bg-cryptora-navy/90 backdrop-blur-sm border-r border-cryptora-neon/20 h-screen fixed left-0 top-0 flex flex-col z-30">
+    <div className="hidden lg:flex w-64 bg-cryptora-navy/90 backdrop-blur-sm border-r border-cryptora-neon/20 h-screen fixed left-0 top-0 flex-col z-30">
       <div className="p-6 border-b border-cryptora-neon/20">
         <div className="flex flex-col items-center space-y-2">
           <CryptoraLogo size="small" />

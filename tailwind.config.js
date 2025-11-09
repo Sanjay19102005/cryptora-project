@@ -58,8 +58,8 @@ export default {
           '100%': { transform: 'translateY(-100vh) translateX(50px) scale(0)', opacity: 0 },
         },
         dataFlow: {
-          '0%': { stroke-dashoffset: 0 },
-          '100%': { stroke-dashoffset: 100 },
+          '0%': { strokeDashoffset: 0 },
+          '100%': { strokeDashoffset: 100 },
         },
         glowRing: {
           '0%, 100%': { 

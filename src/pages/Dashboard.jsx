@@ -74,7 +74,7 @@ const Dashboard = ({ onLogout }) => {
     <div className="flex min-h-screen bg-cryptora-navy">
       <Sidebar onLogout={onLogout} />
       
-      <div className="flex-1 ml-64 p-8">
+      <div className="flex-1 ml-0 lg:ml-64 p-4 sm:p-6 lg:p-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white mb-2 font-futura text-neon-glow-sm">Dashboard</h1>
           <p className="text-gray-400 font-futura">Real-time TOR network monitoring and analysis</p>
@@ -216,7 +216,7 @@ const Dashboard = ({ onLogout }) => {
                 )
               })}
             </svg>
-            <div className="absolute bottom-4 left-4 flex space-x-4 text-sm font-futura">
+            <div className="absolute bottom-4 left-4 flex flex-wrap gap-x-4 gap-y-2 text-sm font-futura">
               <div className="flex items-center space-x-2">
                 <div className="w-3 h-3 bg-cryptora-neon rounded-full animate-pulse"></div>
                 <span className="text-gray-300">Entry Nodes</span>

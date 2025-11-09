@@ -4,85 +4,71 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
+@layer utilities {
+  /* Theme CSS variables for dynamic colors */
+  :root {
+    --cryptora-navy: #0B1C2C;
+    --cryptora-neon: #00C3FF;
+    --cryptora-dark: #050508;
+    --cryptora-light: #1a1a2e;
+    --cryptora-text: #E5E7EB; /* gray-200 */
+    --cryptora-accent-2: #22D3EE; /* cyan-400 */
+    --cryptora-accent-3: #EC4899; /* pink-500 */
+  }
+
+  /* Base page styling */
   body {
-    background-color: #0B1C2C;
+    background-color: var(--cryptora-navy);
     color: rgb(243 244 246);
     font-family: 'Rajdhani', 'Inter', 'Segoe UI', system-ui, sans-serif;
     background-image: linear-gradient(180deg, #050508 0%, #0B1C2C 50%, #050508 100%);
     min-height: 100vh;
+    overflow-x: hidden; /* prevent horizontal scroll from accidental overflow */
   }
-}
 
-@layer utilities {
-  .bg-cryptora-navy {
-    background-color: #0B1C2C;
-  }
-  
-  .bg-cryptora-neon {
-    background-color: #00C3FF;
-  }
-  
-  .bg-cryptora-dark {
-    background-color: #050508;
-  }
-  
-  .bg-cryptora-light {
-    background-color: #1a1a2e;
-  }
-  
-  .text-cryptora-navy {
-    color: #0B1C2C;
-  }
-  
-  .text-cryptora-neon {
-    color: #00C3FF;
-  }
-  
-  .border-cryptora-navy {
-    border-color: #0B1C2C;
-  }
-  
-  .border-cryptora-neon {
-    border-color: #00C3FF;
-  }
-  
+  /* Make media, SVGs, and canvases scale inside containers */
+  img, svg, canvas, video { max-width: 100%; height: auto; }
+
+  /* Utility helpers */
+  .bg-cryptora-navy { background-color: var(--cryptora-navy); }
+  .bg-cryptora-neon { background-color: var(--cryptora-neon); }
+  .bg-cryptora-dark { background-color: var(--cryptora-dark); }
+  .bg-cryptora-light { background-color: var(--cryptora-light); }
+
+  .text-cryptora-navy { color: var(--cryptora-navy); }
+  .text-cryptora-neon { color: var(--cryptora-neon); }
+
+  .border-cryptora-navy { border-color: var(--cryptora-navy); }
+  .border-cryptora-neon { border-color: var(--cryptora-neon); }
+
   .cryptora-border {
     border-width: 1px;
     border-style: solid;
     border-color: rgba(0, 195, 255, 0.3);
     box-shadow: 0 0 10px rgba(0, 195, 255, 0.1);
   }
-  
-  .cryptora-glow {
-    box-shadow: 0 0 20px rgba(0, 195, 255, 0.3);
-  }
-  
-  .text-neon-glow {
-    text-shadow: 0 0 10px #00C3FF;
-  }
-  
-  .text-neon-glow-sm {
-    text-shadow: 0 0 5px #00C3FF;
-  }
-  
+
+  .cryptora-glow { box-shadow: 0 0 20px rgba(0, 195, 255, 0.3); }
+
+  .text-neon-glow { text-shadow: 0 0 10px var(--cryptora-neon); }
+  .text-neon-glow-sm { text-shadow: 0 0 5px var(--cryptora-neon); }
+
   .neon-button {
     border-width: 2px;
     border-style: solid;
-    border-color: #00C3FF;
-    color: #00C3FF;
+    border-color: var(--cryptora-neon);
+    color: var(--cryptora-neon);
     font-weight: 700;
     transition-property: all;
     transition-duration: 0.3s;
     box-shadow: 0 0 10px rgba(0, 195, 255, 0.5);
   }
-  
   .neon-button:hover {
-    background-color: #00C3FF;
-    color: #0B1C2C;
+    background-color: var(--cryptora-neon);
+    color: var(--cryptora-navy);
     box-shadow: 0 0 20px rgba(0, 195, 255, 0.8);
   }
-  
+
   .glassmorphism {
     background-color: rgba(11, 28, 44, 0.4);
     backdrop-filter: blur(10px);
@@ -90,33 +76,25 @@
     border-style: solid;
     border-color: rgba(0, 195, 255, 0.2);
   }
-  
+
+  /* Responsive helpers */
+  .container-responsive { width: 100%; max-width: 1200px; margin-left: auto; margin-right: auto; padding-left: 1rem; padding-right: 1rem; }
+  .aspect-16-9 { aspect-ratio: 16 / 9; }
+  .aspect-4-3 { aspect-ratio: 4 / 3; }
+  .break-anywhere { overflow-wrap: anywhere; word-break: break-word; }
+
   /* Input styling - black text for visibility */
   input[type="text"],
   input[type="email"],
-  input[type="password"] {
-    color: #000000 !important;
-  }
-  
-  input::placeholder {
-    color: #4b5563 !important;
-    opacity: 1;
-  }
-  
-  /* Ensure input backgrounds are light enough for black text */
-  input.bg-white\/90 {
-    background-color: rgba(255, 255, 255, 0.9) !important;
-  }
-  
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
-  
+  input[type="password"] { color: #000000 !important; }
+
+  input::placeholder { color: #4b5563 !important; opacity: 1; }
+
+  /* Removed invalid selector input.bg-white\/90; use Tailwind bg-white/90 in markup */
+
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+
   /* Logo styles - ensure full color display */
   .cryptora-logo-container,
   .cryptora-logo-container * {
@@ -124,7 +102,7 @@
     filter: none !important;
     mix-blend-mode: normal !important;
   }
-  
+
   /* Ensure logo images display correctly */
   img[alt*="CRYPTORA"],
   img[alt*="Logo"] {
@@ -132,87 +110,69 @@
     filter: none !important;
     mix-blend-mode: normal !important;
   }
-  
+
   /* Ensure Lock icon displays correctly */
   svg[class*="lucide-lock"] {
     opacity: 1 !important;
     filter: none !important;
-    color: #00C3FF !important;
+    color: var(--cryptora-neon) !important;
   }
-  
+
   /* Override any parent styles affecting logos */
   [style*="opacity"] img[alt*="Logo"],
   [style*="filter"] img[alt*="Logo"] {
     opacity: 1 !important;
     filter: none !important;
   }
-}
 
-@keyframes nodePulse {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
+  /* Custom animations and helpers used across the app */
+  @keyframes nodePulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.1); }
   }
-  50% {
-    opacity: 0.7;
-    transform: scale(1.1);
-  }
-}
+  .node-pulse { animation: nodePulse 2s ease-in-out infinite; }
 
-.node-pulse {
-  animation: nodePulse 2s ease-in-out infinite;
-}
+  .data-flow { stroke-dasharray: 10 10; animation: dataFlow 3s linear infinite; }
 
-.data-flow {
-  stroke-dasharray: 10 10;
-  animation: dataFlow 3s linear infinite;
-}
+  @keyframes dataFlow {
+    0% { stroke-dashoffset: 200; }
+    100% { stroke-dashoffset: 0; }
+  }
 
-@keyframes neonRing {
-  0%, 100% {
-    box-shadow: 0 0 20px rgba(0, 195, 255, 0.3);
+  @keyframes neonRing {
+    0%, 100% { box-shadow: 0 0 20px rgba(0, 195, 255, 0.3); }
+    50% { box-shadow: 0 0 30px rgba(0, 195, 255, 0.5); }
   }
-  50% {
-    box-shadow: 0 0 30px rgba(0, 195, 255, 0.5);
-  }
-}
+  .neon-ring { animation: neonRing 3s ease-in-out infinite; }
 
-.neon-ring {
-  animation: neonRing 3s ease-in-out infinite;
-}
+  @keyframes floatParticle {
+    0% { transform: translateY(100vh) translateX(0) rotate(0deg); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-100vh) translateX(100px) rotate(360deg); opacity: 0; }
+  }
+  .float-particle { animation: floatParticle 15s linear infinite; }
 
-@keyframes floatParticle {
-  0% {
-    transform: translateY(100vh) translateX(0) rotate(0deg);
-    opacity: 0;
+  /* Media queries for spacing and layout on small screens */
+  /* Tablet and below (<= 1024px) */
+  @media (max-width: 1024px) {
+    html { font-size: 15px; }
+    .container-responsive { padding-left: 0.75rem; padding-right: 0.75rem; }
   }
-  10% {
-    opacity: 1;
-  }
-  90% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(-100vh) translateX(100px) rotate(360deg);
-    opacity: 0;
-  }
-}
 
-.float-particle {
-  animation: floatParticle 15s linear infinite;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
+  /* Small tablets/large phones (<= 768px) */
+  @media (max-width: 768px) {
+    html { font-size: 14px; }
+    .glassmorphism { padding: 1.25rem !important; }
+    .neon-button { padding-left: 1rem; padding-right: 1rem; }
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  /* Phones (<= 480px) */
+  @media (max-width: 480px) {
+    html { font-size: 13px; }
+    .glassmorphism { padding: 1rem !important; }
+    .neon-button { padding-left: 0.75rem; padding-right: 0.75rem; padding-top: 0.625rem; padding-bottom: 0.625rem; }
+    .container-responsive { padding-left: 0.75rem; padding-right: 0.75rem; }
   }
 }
 
-.animate-fade-in {
-  animation: fadeIn 0.5s ease-out;
-}
