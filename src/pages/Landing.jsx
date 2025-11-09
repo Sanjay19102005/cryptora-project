@@ -111,7 +111,7 @@ const Landing = () => {
         </div>
 
         {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 mt-8 sm:mt-12 z-20 px-4 w-full max-w-md sm:max-w-none">
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 mt-8 sm:mt-12 z-20 px-4 w-full max-w-2xl mx-auto items-center justify-center min-h-[96px] text-center">
           <Link
             to="/login"
             className="neon-button px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-lg font-futura font-bold flex items-center justify-center space-x-2 group"

@@ -8,8 +8,12 @@ const TopologySimulation = ({ onLogout }) => {
   const [isAnimating, setIsAnimating] = useState(false)
   const [animationStep, setAnimationStep] = useState(0)
   const [hoveredNode, setHoveredNode] = useState(null)
+  const [selectedNode, setSelectedNode] = useState(null) // { data, xPx, yPx }
   const [timelineLogs, setTimelineLogs] = useState([])
   const timelineEndRef = useRef(null)
+  const svgRef = useRef(null)
+  const vizContainerRef = useRef(null)
+  const infoRef = useRef(null)
 
   // Dynamic color palette from CSS variables (logo/theme)
   const [palette, setPalette] = useState({
@@ -34,6 +38,22 @@ const TopologySimulation = ({ onLogout }) => {
     timelineEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [timelineLogs])
 
+  // Hide selected info when clicking outside
+  useEffect(() => {
+    const handler = (e) => {
+      if (!selectedNode) return
+      const infoEl = infoRef.current
+      if (infoEl && infoEl.contains(e.target)) return
+      setSelectedNode(null)
+    }
+    document.addEventListener('mousedown', handler)
+    document.addEventListener('touchstart', handler)
+    return () => {
+      document.removeEventListener('mousedown', handler)
+      document.removeEventListener('touchstart', handler)
+    }
+  }, [selectedNode])
+
   const addLog = (message, type = 'info') => {
     const log = {
       id: Date.now() + Math.random(),
@@ -49,6 +69,7 @@ const TopologySimulation = ({ onLogout }) => {
     setCircuit(newCircuit)
     setIsAnimating(true)
     setAnimationStep(0)
+    setSelectedNode(null)
 
     // Add initial log
     addLog(`Circuit ${newCircuit.id} initialized`, 'success')
@@ -88,6 +109,7 @@ const TopologySimulation = ({ onLogout }) => {
     setIsAnimating(false)
     setAnimationStep(0)
     setHoveredNode(null)
+    setSelectedNode(null)
     addLog('Simulation reset', 'warning')
   }
 
@@ -131,6 +153,25 @@ const TopologySimulation = ({ onLogout }) => {
     }
   }
 
+  const computeNodeScreenPosition = (node) => {
+    const svg = svgRef.current
+    const wrapper = vizContainerRef.current
+    if (!svg || !wrapper || !node?.position) return { x: 0, y: 0 }
+    const rect = svg.getBoundingClientRect()
+    const scaleX = rect.width / 820
+    const scaleY = rect.height / 400
+    const xPx = rect.left + node.position.x * scaleX
+    const yPx = rect.top + node.position.y * scaleY
+    const wrapperRect = wrapper.getBoundingClientRect()
+    return { x: xPx - wrapperRect.left, y: yPx - wrapperRect.top }
+  }
+
+  const handleNodeClick = (node, e) => {
+    e?.stopPropagation?.()
+    const { x, y } = computeNodeScreenPosition(node)
+    setSelectedNode({ data: node, xPx: x, yPx: y })
+  }
+
   return (
     <div className="flex min-h-screen bg-cryptora-navy">
       <Sidebar onLogout={onLogout} />
@@ -172,10 +213,19 @@ const TopologySimulation = ({ onLogout }) => {
         </div>
 
         {/* Topology Visualization (always at top) */}
-        <div className="glassmorphism border border-cryptora-neon/30 rounded-lg p-3 sm:p-6 mb-6 relative overflow-visible mx-auto max-w-screen-xl">
+        <div
+          ref={vizContainerRef}
+          onClick={() => setSelectedNode(null)}
+          className="glassmorphism border border-cryptora-neon/30 rounded-lg p-3 sm:p-6 mb-6 relative overflow-visible mx-auto max-w-screen-xl"
+        >
           {circuit ? (
             <div className="relative w-full aspect-16-9 min-h-[260px]">
-              <svg viewBox="0 0 820 400" preserveAspectRatio="xMidYMid meet" className="absolute inset-0 w-full h-full">
+              <svg
+                ref={svgRef}
+                viewBox="0 0 820 400"
+                preserveAspectRatio="xMidYMid meet"
+                className="absolute inset-0 w-full h-full"
+              >
                 {/* Connection Lines with Glow */}
                 <defs>
                   <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -191,8 +241,9 @@ const TopologySimulation = ({ onLogout }) => {
                   x2={circuit.middle.position.x}
                   y2={circuit.middle.position.y}
                   stroke={animationStep >= 1 ? 'url(#lineGradient)' : '#334155'}
-                  strokeWidth="3"
-                  className={animationStep >= 1 ? 'data-flow' : ''}
+                  strokeWidth="5"
+                  strokeDasharray="6 6"
+                  strokeLinecap="round"
                   opacity={animationStep >= 1 ? 1 : 0.4}
                   style={{ filter: animationStep >= 1 ? 'drop-shadow(0 0 8px rgba(0, 195, 255, 0.8))' : 'none' }}
                 />
@@ -202,8 +253,9 @@ const TopologySimulation = ({ onLogout }) => {
                   x2={circuit.exit.position.x}
                   y2={circuit.exit.position.y}
                   stroke={animationStep >= 2 ? 'url(#lineGradient)' : '#334155'}
-                  strokeWidth="3"
-                  className={animationStep >= 2 ? 'data-flow' : ''}
+                  strokeWidth="5"
+                  strokeDasharray="6 6"
+                  strokeLinecap="round"
                   opacity={animationStep >= 2 ? 1 : 0.4}
                   style={{ filter: animationStep >= 2 ? 'drop-shadow(0 0 8px rgba(0, 195, 255, 0.8))' : 'none' }}
                 />
@@ -218,6 +270,7 @@ const TopologySimulation = ({ onLogout }) => {
                     className={`transition-all duration-500 ${getNodeGlow('entry', animationStep >= 1)}`}
                     onMouseEnter={() => setHoveredNode(circuit.entry)}
                     onMouseLeave={() => setHoveredNode(null)}
+                    onClick={(e) => handleNodeClick(circuit.entry, e)}
                   />
                   <text
                     x={circuit.entry.position.x}
@@ -242,6 +295,7 @@ const TopologySimulation = ({ onLogout }) => {
                     className={`transition-all duration-500 ${getNodeGlow('middle', animationStep >= 2)}`}
                     onMouseEnter={() => setHoveredNode(circuit.middle)}
                     onMouseLeave={() => setHoveredNode(null)}
+                    onClick={(e) => handleNodeClick(circuit.middle, e)}
                   />
                   <text
                     x={circuit.middle.position.x}
@@ -266,6 +320,7 @@ const TopologySimulation = ({ onLogout }) => {
                     className={`transition-all duration-500 ${getNodeGlow('exit', animationStep >= 3)}`}
                     onMouseEnter={() => setHoveredNode(circuit.exit)}
                     onMouseLeave={() => setHoveredNode(null)}
+                    onClick={(e) => handleNodeClick(circuit.exit, e)}
                   />
                   <text
                     x={circuit.exit.position.x}
@@ -281,7 +336,34 @@ const TopologySimulation = ({ onLogout }) => {
                 </g>
               </svg>
 
-              {/* Node Metadata Panel */}
+              {/* Click-anchored Node Info Box */}
+              {selectedNode && (
+                <div
+                  ref={infoRef}
+                  role="dialog"
+                  aria-label={`${selectedNode.data.type} node info`}
+                  className="info-popover absolute z-20 glassmorphism border border-cryptora-neon/50 rounded-lg p-3 sm:p-4 min-w-[220px] sm:min-w-[280px] cryptora-glow animate-fade-in"
+                  style={{
+                    left: Math.max(8, Math.min(selectedNode.xPx, (vizContainerRef.current?.clientWidth || 0) - 8)) + 'px',
+                    top: Math.max(8, Math.min(selectedNode.yPx - 12, (vizContainerRef.current?.clientHeight || 0) - 8)) + 'px',
+                    transform: 'translate(-50%, -110%)'
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="info-arrow" />
+                  <h4 className="text-sm sm:text-base font-bold text-white mb-2 font-futura">
+                    {selectedNode.data.type.toUpperCase()} — {selectedNode.data.ip}
+                  </h4>
+                  <p className="text-xs text-gray-400 mb-2 font-futura">Secure relay node in {selectedNode.data.country}</p>
+                  <div className="space-y-1 text-xs sm:text-sm font-futura">
+                    <div className="flex justify-between"><span className="text-gray-400">Port</span><span className="text-white">{selectedNode.data.port}</span></div>
+                    <div className="flex justify-between"><span className="text-gray-400">Bandwidth</span><span className="text-white">{selectedNode.data.bandwidth} KB/s</span></div>
+                    <div className="flex justify-between"><span className="text-gray-400">Uptime</span><span className="text-white">{selectedNode.data.uptime}%</span></div>
+                  </div>
+                </div>
+              )}
+
+              {/* Hover Metadata Panel (top-right) */}
               {hoveredNode && (
                 <div className="absolute top-2 right-2 sm:top-4 sm:right-4 glassmorphism border border-cryptora-neon/50 rounded-lg p-3 sm:p-4 min-w-[240px] sm:min-w-[300px] cryptora-glow z-10">
                   <h4 className="text-base sm:text-lg font-bold text-white mb-2 sm:mb-3 font-futura">{hoveredNode.type.toUpperCase()} Node</h4>

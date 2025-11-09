@@ -77,6 +77,27 @@
     border-color: rgba(0, 195, 255, 0.2);
   }
 
+  /* Popover styling for node info */
+  .info-popover {
+    transform-origin: bottom left;
+    animation: popIn 180ms ease-out;
+  }
+  .info-popover .info-arrow {
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    transform: translateX(-50%);
+    width: 0; height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid rgba(0, 195, 255, 0.3);
+    filter: drop-shadow(0 -1px 2px rgba(0,0,0,0.3));
+  }
+  @keyframes popIn {
+    0% { opacity: 0; transform: translate(-50%, -120%) scale(0.96); }
+    100% { opacity: 1; transform: translate(-50%, -110%) scale(1); }
+  }
+
   /* Responsive helpers */
   .container-responsive { width: 100%; max-width: 1200px; margin-left: auto; margin-right: auto; padding-left: 1rem; padding-right: 1rem; }
   .aspect-16-9 { aspect-ratio: 16 / 9; }
@@ -175,4 +196,3 @@
     .container-responsive { padding-left: 0.75rem; padding-right: 0.75rem; }
   }
 }
-

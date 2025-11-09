@@ -70,76 +70,72 @@ app.get('/', (req, res) => {
   });
 });
 
-// MongoDB connection - REQUIRED for production
+// MongoDB connection - Optional for development
 const MONGODB_URI = process.env.MONGODB_URI;
+const isDevelopment = process.env.NODE_ENV === 'development';
 
-if (!MONGODB_URI) {
-  console.error('❌ MONGODB_URI environment variable is not set');
-  console.error('❌ Please set MONGODB_URI in your .env file or Render dashboard');
-  console.error('❌ Example: mongodb+srv://username:password@cluster.mongodb.net/cryptora');
-  process.exit(1);
-}
-
-// Validate that MONGODB_URI is not localhost
-if (MONGODB_URI.includes('localhost') || MONGODB_URI.includes('127.0.0.1')) {
-  console.error('❌ MONGODB_URI cannot use localhost in production');
-  console.error('❌ Please use MongoDB Atlas connection string');
-  console.error('❌ Get one from: https://cloud.mongodb.com');
-  process.exit(1);
-}
-
-// Connect to MongoDB first before starting server
-mongoose.connect(MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  serverSelectionTimeoutMS: 10000,
-  socketTimeoutMS: 45000,
-})
-  .then(() => {
+// Start server function
+const startServer = () => {
+  const server = app.listen(PORT, '0.0.0.0', () => {
     console.log('');
+    console.log('🚀 CRYPTORA Backend Server');
     console.log('='.repeat(50));
-    console.log('✅ Connected to MongoDB Atlas');
-    console.log(`📊 Database: ${MONGODB_URI.split('@')[1]?.split('/')[0] || 'cryptora'}`);
+    console.log(`📍 Server running on port ${PORT}`);
+    console.log(`📡 API endpoints available at /api`);
+    console.log(`🔍 Health check: /api/health`);
+    console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
     console.log('='.repeat(50));
     console.log('');
-    
-    // Start server only after MongoDB connection
-    const server = app.listen(PORT, '0.0.0.0', () => {
-      console.log('🚀 CRYPTORA Backend Server');
-      console.log('='.repeat(50));
-      console.log(`📍 Server running on port ${PORT}`);
-      console.log(`📡 API endpoints available at /api`);
-      console.log(`🔍 Health check: /api/health`);
+  });
+  
+  // Handle server errors
+  server.on('error', (error) => {
+    if (error.code === 'EADDRINUSE') {
+      console.error(`❌ Port ${PORT} is already in use`);
+      console.error(`   Please stop the process using port ${PORT} or change PORT in .env`);
+      process.exit(1);
+    } else {
+      console.error('❌ Server error:', error);
+      process.exit(1);
+    }
+  });
+};
+
+// Try to connect to MongoDB
+if (MONGODB_URI && MONGODB_URI !== 'mongodb://localhost:27017/cryptora') {
+  // Production mode with MongoDB Atlas
+  mongoose.connect(MONGODB_URI, {
+    serverSelectionTimeoutMS: 10000,
+    socketTimeoutMS: 45000,
+  })
+    .then(() => {
       console.log('');
       console.log('='.repeat(50));
+      console.log('✅ Connected to MongoDB');
+      console.log(`📊 Database: ${MONGODB_URI.split('@')[1]?.split('/')[0] || 'cryptora'}`);
+      console.log('='.repeat(50));
+      startServer();
+    })
+    .catch((error) => {
+      console.error('');
+      console.error('='.repeat(50));
+      console.error('❌ MongoDB connection failed:', error.message);
+      console.error('⚠️  Starting in DEVELOPMENT MODE without database');
+      console.error('⚠️  Data will be stored in memory only');
+      console.error('='.repeat(50));
+      console.error('');
+      startServer();
     });
-    
-    // Handle server errors
-    server.on('error', (error) => {
-      if (error.code === 'EADDRINUSE') {
-        console.error(`❌ Port ${PORT} is already in use`);
-        console.error(`   Please stop the process using port ${PORT} or change PORT in .env`);
-        process.exit(1);
-      } else {
-        console.error('❌ Server error:', error);
-        process.exit(1);
-      }
-    });
-  })
-  .catch((error) => {
-    console.error('');
-    console.error('='.repeat(50));
-    console.error('❌ MongoDB connection failed:', error.message);
-    console.error('='.repeat(50));
-    console.error('❌ Please check:');
-    console.error('   1. MONGODB_URI is correct in .env or Render dashboard');
-    console.error('   2. MongoDB Atlas cluster is running');
-    console.error('   3. IP address is whitelisted (use 0.0.0.0/0 for all IPs)');
-    console.error('   4. Database user credentials are correct');
-    console.error('='.repeat(50));
-    console.error('');
-    process.exit(1);
-  });
+} else {
+  // Development mode without MongoDB
+  console.log('');
+  console.log('='.repeat(50));
+  console.log('⚠️  DEVELOPMENT MODE - No MongoDB connection');
+  console.log('⚠️  Using in-memory storage (data will not persist)');
+  console.log('⚠️  To use MongoDB, set MONGODB_URI in backend/.env');
+  console.log('='.repeat(50));
+  startServer();
+}
 
 // Export connection status
 export default app;

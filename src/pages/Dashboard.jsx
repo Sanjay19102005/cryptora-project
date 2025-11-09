@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Sidebar from '../components/Sidebar'
 import { 
   Server, 
@@ -21,6 +21,8 @@ const Dashboard = ({ onLogout }) => {
     detectedSessions: 0,
     suspectedOrigins: 0,
   })
+  const mapWrapperRef = useRef(null)
+  const [selected, setSelected] = useState(null) // {node, xPx, yPx}
 
   useEffect(() => {
     // Initialize data
@@ -69,6 +71,17 @@ const Dashboard = ({ onLogout }) => {
       <p className="text-gray-400 text-sm font-futura">{label}</p>
     </div>
   )
+
+  const handleMapNodeClick = (node) => {
+    const wrapper = mapWrapperRef.current
+    if (!wrapper) return
+    const rect = wrapper.getBoundingClientRect()
+    const xPct = ((node.lon + 180) / 360)
+    const yPct = ((node.lat + 90) / 180)
+    const xPx = rect.width * xPct
+    const yPx = rect.height * yPct
+    setSelected({ node, xPx, yPx })
+  }
 
   return (
     <div className="flex min-h-screen bg-cryptora-navy">
@@ -181,7 +194,11 @@ const Dashboard = ({ onLogout }) => {
             <Globe className="w-5 h-5 text-cryptora-neon" />
             <span>TOR Node Distribution</span>
           </h3>
-          <div className="relative h-96 bg-cryptora-navy/50 rounded-lg overflow-hidden border border-cryptora-neon/20">
+          <div
+            ref={mapWrapperRef}
+            className="relative h-96 bg-cryptora-navy/50 rounded-lg overflow-hidden border border-cryptora-neon/20"
+            onClick={() => setSelected(null)}
+          >
             <svg width="100%" height="100%" className="absolute inset-0">
               {nodes.slice(0, 50).map((node, index) => {
                 const x = ((node.lon + 180) / 360) * 100
@@ -196,8 +213,9 @@ const Dashboard = ({ onLogout }) => {
                       cy={`${y}%`}
                       r="4"
                       fill={color}
-                      className="node-pulse"
+                      className="node-pulse cursor-pointer"
                       opacity="0.9"
+                      onClick={(e) => { e.stopPropagation(); handleMapNodeClick(node) }}
                     >
                       <title>{`${node.ip} (${node.country}) - ${node.type}`}</title>
                     </circle>
@@ -216,6 +234,24 @@ const Dashboard = ({ onLogout }) => {
                 )
               })}
             </svg>
+
+            {selected && (
+              <div
+                className="info-popover absolute z-20 glassmorphism border border-cryptora-neon/50 rounded-lg p-3 min-w-[220px] cryptora-glow animate-fade-in"
+                style={{ left: `${selected.xPx}px`, top: `${selected.yPx}px`, transform: 'translate(-50%, -110%)' }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="info-arrow" />
+                <h4 className="text-sm font-bold text-white mb-1 font-futura">{selected.node.ip}</h4>
+                <p className="text-xs text-gray-400 mb-2 font-futura">{selected.node.type.toUpperCase()} in {selected.node.country}</p>
+                <div className="space-y-1 text-xs font-futura">
+                  <div className="flex justify-between"><span className="text-gray-400">Port</span><span className="text-white">{selected.node.port}</span></div>
+                  <div className="flex justify-between"><span className="text-gray-400">Bandwidth</span><span className="text-white">{selected.node.bandwidth} KB/s</span></div>
+                  <div className="flex justify-between"><span className="text-gray-400">Uptime</span><span className="text-white">{selected.node.uptime}%</span></div>
+                </div>
+              </div>
+            )}
+
             <div className="absolute bottom-4 left-4 flex flex-wrap gap-x-4 gap-y-2 text-sm font-futura">
               <div className="flex items-center space-x-2">
                 <div className="w-3 h-3 bg-cryptora-neon rounded-full animate-pulse"></div>
@@ -238,4 +274,3 @@ const Dashboard = ({ onLogout }) => {
 }
 
 export default Dashboard
-
